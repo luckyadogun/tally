@@ -1,5 +1,7 @@
 import datetime
+import itertools
 from typing import List
+from abc import ABCMeta, abstractmethod
 
 
 class BaseError(TypeError): pass
@@ -8,74 +10,33 @@ class EmptyImagesError(BaseError): pass
 class ExpiryDateInputError(BaseError): pass
 
 
-
-# TODO:
-# Dynamic class naming should it change 
-
-class BaseProduct:
-    """
-    Abstract Base Class
-
-    NOTE: This class should not be instatiated.
-
-    This class congregates the similar properties and behaviors
-    across deriving classes.
-
-    This class should be inherited by:
-
-        - TangibleBaseProduct class: A sub-base class for tangible products
-        - DigitalProduct class: A sub class for digital products
-
-    """
+class BaseProduct(metaclass=ABCMeta):
+    id_iter = itertools.count()
 
     def __init__(self, name, desc=''):
         self.name = name
         self.desc = desc
         self.images = []
         self.main_image = ''
+        self.created = datetime.datetime.now()
 
-    def add_images(self, images: List):
-        for img in images:
-            self.images.append(img)
+    @property
+    def date_created(self):
+        return self.created.strftime("%Y-%m-%d")
 
-    def set_main_image(self, index: int):
-        if len(self.images) == 0:
-            raise EmptyImagesError
-    
-        self.main_image = self.images[index]
-        print("Successful...")
+    @abstractmethod
+    def allproducts(self):
+        pass
 
-    def __new__(cls, *args, **kwargs):
-        if cls is BaseProduct:
-            raise BaseInstantiationError(cls)
-        return BaseProduct.__new__(cls, *args, **kwargs)
+    @abstractmethod
+    def get(self, id):
+        pass
 
+    @abstractmethod
+    def update(self, id, **kwargs):
+        pass
 
-# class TangibleProduct(BaseProduct):
-#     """
-#         Abstract Class inheriting from BaseProduct class
+    @abstractmethod
+    def delete(self, id):
+        pass
 
-#         This class should not be instatiated.
-#     """
-#     def __init__(self, name: str, weight: int, width: int, height: int, desc=''):
-#         super().__init__(name, desc)
-#         self.weight = weight
-#         self.width = width
-#         self.height = height
-#         self.expires = None
-
-#     def set_expiry_date(self, date_input: str):
-#         try:
-#             year, month, day = map(int, date_input.split('-'))
-#             self.expires = datetime.datetime(year, month, day)
-#         except Exception as e:
-#             raise ExpiryDateInputError
-        
-#     def __new__(cls, *args, **kwargs):
-#         if cls is TangibleProduct:
-#             raise BaseInstantiationError(cls)
-#         return TangibleProduct.__new__(cls, *args, **kwargs)
-
-
-
-    
