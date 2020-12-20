@@ -4,7 +4,7 @@ from typing import List
 from abc import ABCMeta, abstractmethod
 
 
-class BaseError(TypeError): pass
+class BaseError(Exception): pass
 class BaseInstantiationError(BaseError): pass
 class EmptyImagesError(BaseError): pass
 class ExpiryDateInputError(BaseError): pass
