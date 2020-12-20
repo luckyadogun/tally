@@ -1,8 +1,9 @@
 import pytest
 
 from core.base import BaseProduct
-from core.products import TangibleProduct, NoInstanceAccessError
+from core import products
 
+#TODO: Use a mock factory to create a shared instance
 
 class TestBaseProduct:
     def test_class_exists(self):
@@ -16,10 +17,10 @@ class TestBaseProduct:
 class TestTangibleProduct:
     def test_tangible_fails_without_fields(self):
         with pytest.raises(TypeError):
-            instance = TangibleProduct('Sample Product', 'I love free samples')
+            instance = products.TangibleProduct('Sample Product', 'I love free samples')
 
     def test_tangible_passes_with_fields(self):
-        instance = TangibleProduct('Sample Product', 1, 12, 22, 'Some sweeet sample')
+        instance = products.TangibleProduct('Sample Product', 1, 12, 22, 'Some sweeet sample')
         assert instance.name == 'Sample Product'
         assert instance.weight == 1
         assert instance.width == 12
@@ -28,13 +29,19 @@ class TestTangibleProduct:
         assert instance.id == 1
 
     def test_instance_cant_access_allproducts(self):
-        with pytest.raises(NoInstanceAccessError):
-            instance = TangibleProduct('Sample Product', 1, 12, 22, 'Some sweeet sample')
+        with pytest.raises(products.NoInstanceAccessError):
+            instance = products.TangibleProduct('Sample Product', 1, 12, 22, 'Some sweeet sample')
             instance.allproducts()
 
     def test_class_can_access_allproducts(self):
-        TangibleProduct('Sample Product', 1, 12, 22, 'Some sweeet sample')
-        assert len(TangibleProduct.allproducts()) > 0
+        products.TangibleProduct('Sample Product', 1, 12, 22, 'Some sweeet sample')
+        assert len(products.TangibleProduct.allproducts()) > 0
+
+    def test_get_product_with_wrong_key_fails(self):
+        with pytest.raises(products.InvalidProductIDError):
+            products.TangibleProduct('Sample Product', 1, 12, 22, 'Some sweeet sample')
+            products.TangibleProduct.get(5)
+
          
 
     

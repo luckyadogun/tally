@@ -3,9 +3,9 @@ import datetime
 
 from . import base
 
-class TangibleProductError(Exception): pass
-class InvalidIDError(TangibleProductError): pass
-class NoInstanceAccessError(TangibleProductError): pass
+class ProductError(Exception): pass
+class InvalidProductIDError(ProductError): pass
+class NoInstanceAccessError(ProductError): pass
 
 class TangibleProduct(base.BaseProduct):
     store = {}
@@ -33,21 +33,13 @@ class TangibleProduct(base.BaseProduct):
 
     @classmethod
     def get(cls, key):
+        if not key in cls.store:
+            raise InvalidProductIDError
         return cls.store.get(key)
-
-    # def get(self, id):
-    #     if id in self.store[id]:
-    #         return TangibleProduct.store.get(id)
-    #     else:
-    #         raise InvalidProductIDException("TangibleProduct with ID: {id} doesn't exist!")
 
     @classmethod
     def update(self, id, **kwargs):
-        # TODO
-        # perform update
-        # open from the store using context manager
-        # read from the datastore
-        # save the fields
+        # TODO: Perform update here
         self.updated = datetime.datetime.now().strftime("%Y-%m-%d")
 
     def delete(self, id_):
@@ -55,11 +47,7 @@ class TangibleProduct(base.BaseProduct):
 
     @staticmethod
     def is_valid_date(date_input: str):
-        # TODO: 
-        # I assume this will be used in other parts
-        # of the codebase, so I suggest it be turned into
-        # a decorator. If another decorator is needed
-        # within the code, we could use a decorators.py module
+        # TODO: Turn to a decorator if another method needs it
         if date_input is not None and len(date_input) == 10:
             result = True if "".join(date_input.split('-')).isnumeric() else False
             return result
@@ -75,10 +63,9 @@ class TangibleProduct(base.BaseProduct):
         return f'<{self.id}, {self.name} - {self.__class__.__name__}>'
 
     def __getattribute__(self, instance):
-        # instances cannot access class methods
         obj = super().__getattribute__(instance)
         if inspect.ismethod(obj):
-            raise NoInstanceAccessError("instance can't access class method")
+            raise NoInstanceAccessError("instances can't access class method")
         return obj
         
 

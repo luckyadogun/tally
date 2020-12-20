@@ -1,6 +1,5 @@
 import datetime
 import itertools
-from typing import List
 from abc import ABCMeta, abstractmethod
 
 
@@ -29,14 +28,14 @@ class BaseProduct(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def get(self, id):
+    def get(self, key):
         pass
 
     @abstractmethod
-    def update(self, id, **kwargs):
+    def update(self, key, **kwargs):
         pass
 
     @abstractmethod
-    def delete(self, id):
+    def delete(self, key):
         pass
 
